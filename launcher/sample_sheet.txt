@@ -1,0 +1,3 @@
+sampleA	sampleA_1.fastq.gz	sampleA_2.fastq.gz
+sampleB	sampleB_1.fastq.gz	sampleB_2.fastq.gz
+
