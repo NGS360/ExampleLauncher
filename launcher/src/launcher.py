@@ -8,9 +8,53 @@ import sys
 
 from cwl_platform import SUPPORTED_PLATFORMS, PlatformFactory
 
+import pipeline_config
+from samplesheet import read_samplesheet
+
+def copy_reference_data(platform, platform_config, reference_project, project):
+    ''' Copy reference data from reference project to the working project '''
+    reference_files = platform_config['reference_data']
+    for ref_name, ref_path in reference_files.items():
+        platform.copy_folder(reference_project, ref_path, project)
+
+def copy_workflows(platform_config, platform, project):
+    ''' Copy reference workflows to project '''
+    workflows = {}
+    for wf_name, wf_id in platform_config['workflows'].items():
+        workflow = platform.copy_workflow(wf_id, project)
+        workflows[wf_name] = workflow
+    return workflows
+
 def do_work(args, platform, project):
     ''' Do the work of the launcher '''
-    logging.info("Doing work...")
+    # Read the samplesheet
+    samples = read_samplesheet(args.sample_sheet)
+
+    # Copy reference workflow(s) to project
+    workflows = copy_workflows(
+        pipeline_config.config[args.platform], platform, project)
+
+    # Copy reference data
+    reference_project = platform.get_project_by_name(
+        pipeline_config.config[args.platform]['reference_project'])
+
+    copy_reference_data(platform, pipeline_config.config[args.platform], reference_project, project)
+    '''
+    # Run the per-sample workflow
+    parameters = get_default_per_sample_alignment_parameters(args, platform, project)
+    samples = run_persample_workflow(samples, workflow, parameters, platform, project)
+    samples = wait_for_tasks(samples, platform, project)
+
+    # Run merge workflow
+    merge_parameters = get_default_merge_parameters(args, platform, project)
+    merge_workflow = run_merge_workflow(samples, merge_parameters, platform, project)
+    merge_workflow = wait_for_tasks(merge_workflow, platform, project)
+
+    # Stage files for output
+    outputs = construct_output_files(merge_workflow, platform, project)
+    platform.stage_output_files(outputs, platform, project)
+    '''
+
 
 def main(argv):
     ''' Main Entry Point '''
