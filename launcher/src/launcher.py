@@ -25,6 +25,14 @@ def copy_workflows(platform_config, platform, project):
         workflows[wf_name] = workflow
     return workflows
 
+def get_default_per_sample_workflow_parameters(platform, project):
+    # In this example workflow, there are not default parameters to be
+    # used across samples.
+    return {}
+
+def run_persample_workflow(samples, workflow, parameters, platform, project):
+    parameters = get_default_per_sample_workflow_parameters(platform, project)
+
 def do_work(args, platform, project):
     ''' Do the work of the launcher '''
     # Read the samplesheet
@@ -39,12 +47,11 @@ def do_work(args, platform, project):
         pipeline_config.config[args.platform]['reference_project'])
 
     copy_reference_data(platform, pipeline_config.config[args.platform], reference_project, project)
-    '''
-    # Run the per-sample workflow
-    parameters = get_default_per_sample_alignment_parameters(args, platform, project)
-    samples = run_persample_workflow(samples, workflow, parameters, platform, project)
-    samples = wait_for_tasks(samples, platform, project)
 
+    # Run the per-sample workflow
+    samples = run_persample_workflow(samples, workflows['workflow'], platform, project)
+    samples = wait_for_tasks(samples, platform, project)
+    '''
     # Run merge workflow
     merge_parameters = get_default_merge_parameters(args, platform, project)
     merge_workflow = run_merge_workflow(samples, merge_parameters, platform, project)
