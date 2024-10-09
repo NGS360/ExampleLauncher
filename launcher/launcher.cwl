@@ -20,5 +20,4 @@ outputs:
   log:
     type: File
     outputBinding:
-    glob: '*.log'
-
+      glob: '*.log'

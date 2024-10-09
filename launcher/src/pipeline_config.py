@@ -14,7 +14,7 @@ config = {
             "hg38": "/reference_files/hg38"
         },
         'workflows': {
-            'per-sample-workflow': 'bristol-myers-squibb/launcher-reference-project/per-sample-workflow',
+            'per-sample-workflow': 'org/project/workflow',
         }
     }
 }

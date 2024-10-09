@@ -157,7 +157,7 @@ def wait_for_tasks(platform, samples, workflow_name):
     :return: Dictionary of sample -> output_uuid
     '''
     for counter, sample in enumerate(samples):
-        logger.info("[%d/%d] %s", counter+1, len(samples), sample)
+        logging.info("[%d/%d] %s", counter+1, len(samples), sample)
 
         # If sample is done, skip it.
         if samples[sample]['workflows'][workflow_name]['state'] in ('Complete', 'Cancelled', 'Failed'):
@@ -201,7 +201,6 @@ def do_work(args, platform, project):
     outputs = construct_output_files(merge_workflow, platform, project)
     platform.stage_output_files(outputs, platform, project)
     '''
-
 
 def main(argv):
     ''' Main Entry Point '''
